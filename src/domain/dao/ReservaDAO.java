@@ -141,7 +141,7 @@ private Connection connection;
 		}
 	}
 	
-	public void deleteById(Long id){
+	public void deletar(Long id){
 		String sql = "DELETE FROM reservas WHERE Id = ?";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
