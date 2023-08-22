@@ -4,6 +4,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import controllers.UsuarioController;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -192,7 +195,7 @@ public class Login extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Login();
+				login();
 			}
 		});
 		btnLogin.setBackground(SystemColor.textHighlight);
@@ -234,13 +237,13 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 	
-	private void Login() {
-		 String Usuario= "admin";
-	     String Senha="admin";
-
-	        String senhaa=new String (txtSenha.getPassword());
-
-	        if(txtUsuario.getText().equals(Usuario) && senhaa.equals(Senha)){
+	private void login() {
+		UsuarioController usuarioController = new UsuarioController();
+		String usuario= txtUsuario.getText();
+	    String senha = usuarioController.buscarPorLogin(usuario);
+	    String senhaIn= new String (txtSenha.getPassword());
+	    usuarioController.desconectar();
+	        if(senhaIn.equals(senha)){
 	            MenuUsuario menu = new MenuUsuario();
 	            menu.setVisible(true);
 	            dispose();	 
