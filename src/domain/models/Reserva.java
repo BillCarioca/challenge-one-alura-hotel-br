@@ -4,17 +4,16 @@ import java.sql.Date;
 
 public class Reserva {
 	private Long id;
-	private Date dataChegada;
+	private Date dataEntrada;
 	private Date dataSaida;
-	private String valor;
+	private Double valor;
 	private String formaPagamento;
 	
 	public Reserva() {}
 
-	public Reserva(Long id, Date dataChegada, Date dataSaida, String valor, String formaPagamento) {
-		super();
+	public Reserva(Long id, Date dataEntrada, Date dataSaida, Double valor, String formaPagamento) {
 		this.id = id;
-		this.dataChegada = dataChegada;
+		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
 		this.valor = valor;
 		this.formaPagamento = formaPagamento;
@@ -28,12 +27,12 @@ public class Reserva {
 		this.id = id;
 	}
 
-	public Date getDataChegada() {
-		return dataChegada;
+	public Date getDataEntrada() {
+		return dataEntrada;
 	}
 
-	public void setDataChegada(Date dataChegada) {
-		this.dataChegada = dataChegada;
+	public void setDataEntrada(Date dataEntrada) {
+		this.dataEntrada = dataEntrada;
 	}
 
 	public Date getDataSaida() {
@@ -44,11 +43,11 @@ public class Reserva {
 		this.dataSaida = dataSaida;
 	}
 
-	public String getValor() {
+	public Double getValor() {
 		return valor;
 	}
 
-	public void setValor(String valor) {
+	public void setValor(Double valor) {
 		this.valor = valor;
 	}
 
@@ -62,7 +61,7 @@ public class Reserva {
 
 	@Override
 	public String toString() {
-		return "Reserva [id=" + id + ", dataChegada=" + dataChegada + ", dataSaida=" + dataSaida + ", valor=" + valor
+		return "Reserva [id=" + id + ", dataChegada=" + dataEntrada + ", dataSaida=" + dataSaida + ", valor=" + valor
 				+ ", formaPagamento=" + formaPagamento + "]";
 	}
 	
