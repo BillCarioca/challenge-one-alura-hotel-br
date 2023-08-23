@@ -315,13 +315,12 @@ public class ReservasView extends JFrame {
 				boolean notNull = (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null);
 				boolean dataValida = (ReservasView.txtDataE.getDate().before(ReservasView.txtDataS.getDate()))&&(ReservasView.txtDataE.getDate().after(dataOntem));
 				if (notNull&&dataValida) {
-					salvarReserva();
-					RegistroHospede registro = new RegistroHospede();
+					RegistroHospede registro = new RegistroHospede(salvarReserva());
 					registro.setVisible(true);
 				} else if (dataValida){
-					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
+					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.","Erro", JOptionPane.ERROR_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(null, "data invalida");
+					JOptionPane.showMessageDialog(null, "data invalida","Erro", JOptionPane.ERROR_MESSAGE);
 				}
 			}						
 		});
@@ -338,7 +337,7 @@ public class ReservasView extends JFrame {
 		lblSeguinte.setBounds(0, 0, 122, 35);
 		btnProximo.add(lblSeguinte);
 	}
-	private void salvarReserva() {
+	private Long salvarReserva() {
 		ReservaController reservaController = new ReservaController();
 		String pagamento = txtFormaPagamento.getSelectedItem().toString();
 		Double valorReserva =Double.valueOf(txtValor.getText());
@@ -347,8 +346,9 @@ public class ReservasView extends JFrame {
 		Reserva reseva = new Reserva(new java.sql.Date(dataEntrada.getTime()),
 									new java.sql.Date(dataSaida.getTime()),
 									valorReserva, pagamento);
-		reservaController.salvar(reseva);
+		Long reservaId = reservaController.salvar(reseva);
 		reservaController.desconectar();
+		return reservaId;
 	}
 
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	

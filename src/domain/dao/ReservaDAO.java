@@ -21,7 +21,7 @@ private Connection connection;
 		this.connection = connection;
 	}
 	
-	public void salvar(Reserva reserva) {
+	public Long salvar(Reserva reserva) {
 		try {
 			
 			String sql = "INSERT INTO  reservas (data_entrada, data_saida, valor, forma_pagamento) VALUES(?, ?, ?, ?)";
@@ -32,7 +32,13 @@ private Connection connection;
 				pstmt.setDouble(3, reserva.getValor());
 				pstmt.setString(4, reserva.getFormaPagamento());
 				pstmt.executeUpdate();
+				try (ResultSet rst = pstmt.getGeneratedKeys()) {
+					while(rst.next()) {
+						reserva.setId(rst.getLong(1));
+					}
+				}
 				pstmt.close();
+				return reserva.getId();
 			}
 		}catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Reserva não cadastrada!","Erro", JOptionPane.ERROR_MESSAGE);
@@ -43,7 +49,7 @@ private Connection connection;
 	public List<Reserva> buscarTodas() {
 		List<Reserva> reservas = new ArrayList<>();
 		
-		String sql = "SELECT id, data_entrada, data_saida, valor, forma_pagamento FROM reservas";
+		String sql = "SELECT reserva_id, data_entrada, data_saida, valor, forma_pagamento FROM reservas";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.execute();

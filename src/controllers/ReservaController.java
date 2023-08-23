@@ -20,8 +20,8 @@ public class ReservaController {
 		this.reservaDAO = new ReservaDAO(this.conn);
 	}
 	
-	public void salvar(Reserva reserva) {
-		this.reservaDAO.salvar(reserva);
+	public Long salvar(Reserva reserva) {
+		return this.reservaDAO.salvar(reserva);
 	}
 	
 	public List<Reserva> buscarTodas(){

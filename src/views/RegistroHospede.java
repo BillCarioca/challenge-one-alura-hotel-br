@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import controllers.HospedeController;
+import domain.models.Hospede;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -20,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
@@ -58,7 +63,8 @@ public class RegistroHospede extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHospede() {
+	public RegistroHospede() {}
+	public RegistroHospede(Long reservaId) {
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHospede.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -241,6 +247,7 @@ public class RegistroHospede extends JFrame {
 		txtNreserva.setColumns(10);
 		txtNreserva.setBackground(Color.WHITE);
 		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtNreserva.setText(reservaId.toString());
 		contentPane.add(txtNreserva);
 		
 		JSeparator separator_1_2 = new JSeparator();
@@ -284,6 +291,17 @@ public class RegistroHospede extends JFrame {
 		btnsalvar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if(validar()) {
+					salvarHospede(reservaId);
+					MenuUsuario menu = new MenuUsuario();
+		            menu.setVisible(true);
+		            dispose();	
+		            JOptionPane.showMessageDialog(null, "Hospede Cadastrado com Sucesso!");
+				}else if (txtDataN.getDate().before(new Date())) {
+					JOptionPane.showMessageDialog(null, "Hospede não cadastrado! Data Inválida!","Erro", JOptionPane.ERROR_MESSAGE);
+				}else {
+					JOptionPane.showMessageDialog(null, "Hospede não cadastrado! Campo em Branco!","Erro", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnsalvar.setLayout(null);
@@ -313,6 +331,25 @@ public class RegistroHospede extends JFrame {
 		logo.setBounds(194, 39, 104, 107);
 		panel.add(logo);
 		logo.setIcon(new ImageIcon(RegistroHospede.class.getResource("/imagenes/Ha-100px.png")));
+	}
+	private boolean validar() {
+		return txtNome.getText()!=null && 
+		   	   txtSobrenome.getText()!=null && 
+		   	   txtDataN.getDate()!=null && 
+		   	   txtNacionalidade.getSelectedItem().toString()!=null && 
+		   	   txtTelefone.getText()!=null &&
+		       txtDataN.getDate().before(new Date());
+	}
+	private void salvarHospede(Long reservaId) {
+		String nome = txtNome.getText();
+		String sobrenome = txtSobrenome.getText();
+		Date dataNascimento = txtDataN.getDate();
+		String nacionalidade = txtNacionalidade.getSelectedItem().toString();
+		String telefone = txtTelefone.getText();
+		Hospede hospede = new Hospede(nome, sobrenome, dataNascimento,nacionalidade,telefone, reservaId);
+		HospedeController hospedeController = new HospedeController();
+		hospedeController.salvar(hospede);
+		hospedeController.desconectar();
 	}
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" y "y"

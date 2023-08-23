@@ -29,7 +29,7 @@ private Connection connection;
 			try(PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 				pstmt.setString(1, hospede.getNome());
 				pstmt.setString(2, hospede.getSobrenome());
-				pstmt.setDate(3, (Date) hospede.getDataNascimento());
+				pstmt.setDate(3, new Date( hospede.getDataNascimento().getTime()));
 				pstmt.setString(4, hospede.getNacionalidade());
 				pstmt.setString(5, hospede.getTelefone());
 				pstmt.setLong(6, hospede.getIdReserva());
@@ -154,7 +154,7 @@ private Connection connection;
 			try {
 				pstmt.setString(1, hospede.getNome());
 				pstmt.setString(2, hospede.getSobrenome());
-				pstmt.setDate(3, (Date) hospede.getDataNascimento());
+				pstmt.setDate(3, new Date( hospede.getDataNascimento().getTime()));
 				pstmt.setString(4, hospede.getNacionalidade());
 				pstmt.setString(5, hospede.getTelefone());
 				pstmt.setLong(6, hospede.getIdReserva());

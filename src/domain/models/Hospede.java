@@ -13,6 +13,16 @@ public class Hospede {
 	
 	public Hospede() {}
 
+	public Hospede(String nome, String sobrenome, Date dataNascimento, String nacionalidade, String telefone,
+			Long idReserva) {
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.dataNascimento = dataNascimento;
+		this.nacionalidade = nacionalidade;
+		this.telefone = telefone;
+		this.idReserva = idReserva;
+	}
+
 	public Hospede(Long id, String nome, String sobrenome, Date dataNascimento, String nacionalidade, String telefone,
 			Long idReserva) {
 		this.id = id;
