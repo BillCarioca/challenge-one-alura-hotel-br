@@ -119,14 +119,15 @@ private Connection connection;
 		}
 		return hospede;
 	}
-	public Hospede buscarPorSobrenome(String sobrenome){
+	public List<Hospede> buscarPorSobrenome(String sobrenome){
 		String sql = "SELECT * FROM hospedes WHERE sobrenome = ?";
-		Hospede hospede = new Hospede();
+		List<Hospede> hospedes = new ArrayList<>();
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)){
 			pstmt.setString(1, sobrenome);
 			try {
 				ResultSet rst = pstmt.executeQuery();
-				if (rst.next()) {
+				while(rst.next()) {
+					Hospede hospede = new Hospede();
 			        hospede.setId(rst.getLong("hospede_id")); 
 			        hospede.setNome(rst.getString("nome"));
 			        hospede.setSobrenome(sobrenome);
@@ -134,6 +135,7 @@ private Connection connection;
 			        hospede.setNacionalidade(rst.getString("nacionalidade"));
 			        hospede.setTelefone(rst.getString("telefone"));
 			        hospede.setIdReserva(rst.getLong("reserva_id"));
+			        hospedes.add(hospede);
 			    }
 				pstmt.close();
 			} catch (Exception e) {
@@ -144,11 +146,11 @@ private Connection connection;
 			JOptionPane.showMessageDialog(null, "hospede não encontrado!","Erro", JOptionPane.ERROR_MESSAGE);
 			throw new RuntimeException(ex);
 		}
-		return hospede;
+		return hospedes;
 	}
 	
 	public void alterar(Hospede hospede){
-		String sql = "UPDATE hospedes SET , nome = ?, sobrenome = ?, data_nascimento = ?, nacionalidade = ?, telefone = ?, reserva_id = ? WHERE hospede_id = ?";
+		String sql = "UPDATE hospedes SET  nome = ?, sobrenome = ?, data_nascimento = ?, nacionalidade = ?, telefone = ?, reserva_id = ? WHERE hospede_id = ?";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			try {

@@ -125,7 +125,7 @@ private Connection connection;
 	}
 	
 	public void alterar(Reserva reserva) {
-		String sql = "UPDATE reservas SET data_entrada = ?, data_saida = ?, valor = ?, forma_pagamento = ? WHERE reseva_id = ?";
+		String sql = "UPDATE reservas SET data_entrada = ?, data_saida = ?, valor = ?, forma_pagamento = ? WHERE reserva_id = ?";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			try {

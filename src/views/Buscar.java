@@ -6,11 +6,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import controllers.HospedeController;
+import controllers.ReservaController;
+import domain.models.Hospede;
+import domain.models.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -20,6 +28,8 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Buscar extends JFrame {
@@ -83,7 +93,9 @@ public class Buscar extends JFrame {
 		panel.setFont(new Font("Roboto", Font.PLAIN, 16));
 		panel.setBounds(20, 169, 865, 328);
 		contentPane.add(panel);
-				
+		
+		String btnBuscar = "";	
+		
 		tbReservas = new JTable();
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
@@ -97,7 +109,7 @@ public class Buscar extends JFrame {
 		panel.addTab("Reservas", new ImageIcon(Buscar.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
 		
-		
+			 
 		tbHospedes = new JTable();
 		tbHospedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbHospedes.setFont(new Font("Roboto", Font.PLAIN, 16));
@@ -109,6 +121,7 @@ public class Buscar extends JFrame {
 		modeloHospedes.addColumn("Nacionalidade");
 		modeloHospedes.addColumn("Telefone");
 		modeloHospedes.addColumn("Numero de Reserva");
+		atualizarHospedes(btnBuscar);
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHospedes);
 		panel.addTab("Huéspedes", new ImageIcon(Buscar.class.getResource("/imagenes/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
@@ -208,7 +221,10 @@ public class Buscar extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				modeloHospedes.setRowCount(0);
+				modelo.setRowCount(0);
+				atualizarHospedes(txtBuscar.getText());
+				
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -245,6 +261,18 @@ public class Buscar extends JFrame {
 		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnDeletar);
 		
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				alterarHospede();
+				alterarReserva();
+				modeloHospedes.setRowCount(0);
+				modelo.setRowCount(0);
+				atualizarHospedes(txtBuscar.getText());
+			}
+		});
+		
 		JLabel lblExcluir = new JLabel("DELETAR");
 		lblExcluir.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExcluir.setForeground(Color.WHITE);
@@ -252,6 +280,108 @@ public class Buscar extends JFrame {
 		lblExcluir.setBounds(0, 0, 122, 35);
 		btnDeletar.add(lblExcluir);
 		setResizable(false);
+	}
+	private void atualizarReservas(Long id) {
+		ReservaController reservaController = new ReservaController();
+		List<Reserva> reservas = new ArrayList<>();
+		if (id==0l||id==null) {
+			reservas = reservaController.buscarTodas();
+		}else {
+			reservas.add(reservaController.buscarPorId(id));
+		}
+		reservaController.desconectar();
+		for (Reserva reserva : reservas) {
+		    Object[] linha = new Object[5];
+		    linha[0] = reserva.getId();
+		    linha[1] = reserva.getDataEntrada();
+		    linha[2] = reserva.getDataSaida();
+		    linha[3] = reserva.getValor();
+		    linha[4] = reserva.getFormaPagamento();
+		    modelo.addRow(linha);
+		}
+	}
+	
+	private void atualizarHospedes(String buscar) {
+		
+		List<Hospede> hospedes = new ArrayList<>();
+		HospedeController hospedeController = new HospedeController();
+		if (buscar==""||buscar==null) {
+			hospedes = hospedeController.buscarTodos();
+			atualizarReservas(0l);
+		}else {
+			hospedes = hospedeController.buscarPorSobrenome(buscar);
+		}
+		hospedeController.desconectar();
+		for (Hospede hospede : hospedes) {
+		    Object[] linha = new Object[7];
+		    linha[0] = hospede.getId();
+		    linha[1] = hospede.getNome();
+		    linha[2] = hospede.getSobrenome();
+		    linha[3] = hospede.getDataNascimento();
+		    linha[4] = hospede.getNacionalidade();
+		    linha[5] = hospede.getTelefone();
+		    linha[6] = hospede.getIdReserva();
+		    modeloHospedes.addRow(linha);
+		    if (buscar!=""&&buscar!=null) atualizarReservas(hospede.getIdReserva());
+		}
+	}
+	
+	private void alterarReserva() {
+		
+		ReservaController reservaController = new ReservaController();
+		int selectedRowIndexRereservas = tbReservas.getSelectedRow();
+		
+		if(selectedRowIndexRereservas != -1) {
+			String id = modelo.getValueAt(selectedRowIndexRereservas, 0).toString();
+			String diaChegada = modelo.getValueAt(selectedRowIndexRereservas, 1).toString();
+			String diaSaida = modelo.getValueAt(selectedRowIndexRereservas, 2).toString();
+			String valor = modelo.getValueAt(selectedRowIndexRereservas, 3).toString();
+			String formaPagamento = modelo.getValueAt(selectedRowIndexRereservas, 4).toString();
+			
+			Long newId = Long.parseLong(id);
+			Double newValor = Double.valueOf(valor);
+									
+			if(!id.trim().isEmpty() && !diaChegada.trim().isEmpty() && !diaSaida.trim().isEmpty() && !valor.trim().isEmpty() && !formaPagamento.trim().isEmpty()) {
+				Reserva reserva = new Reserva(newId, java.sql.Date.valueOf(diaChegada), java.sql.Date.valueOf(diaSaida), newValor, formaPagamento);
+				reservaController.alterar(reserva);
+				reservaController.desconectar();
+				JOptionPane.showMessageDialog(contentPane, "Reserva atualizada!");
+				
+			} else {
+				JOptionPane.showMessageDialog(null, "Não é permitido atualizar campos vazios.!","Erro", JOptionPane.ERROR_MESSAGE);
+			}	
+		}
+	}
+	
+	private void alterarHospede() {
+		HospedeController hospedeController = new HospedeController();
+		int selectedRowIndex = tbHospedes.getSelectedRow();
+		
+		if(selectedRowIndex != -1) {
+			String id = modeloHospedes.getValueAt(selectedRowIndex, 0).toString();
+			String nome = modeloHospedes.getValueAt(selectedRowIndex, 1).toString();
+			String sobrenome = modeloHospedes.getValueAt(selectedRowIndex, 2).toString();
+			String dataNascimento = modeloHospedes.getValueAt(selectedRowIndex, 3).toString();
+			String nacionalidade = modeloHospedes.getValueAt(selectedRowIndex, 4).toString();
+			String telefone = modeloHospedes.getValueAt(selectedRowIndex, 5).toString();
+			String reservaId = modeloHospedes.getValueAt(selectedRowIndex, 6).toString();
+			
+			Long newId = Long.parseLong(id);
+			Long newreservaId = Long.parseLong(reservaId);
+													
+			if(!id.trim().isEmpty() && !nome.trim().isEmpty() && !sobrenome.trim().isEmpty() && 
+					!dataNascimento.trim().isEmpty() && !nacionalidade.trim().isEmpty() && 
+					!telefone.trim().isEmpty() && !reservaId.trim().isEmpty()) {	
+				Hospede hospede = new Hospede(newId, nome, sobrenome, java.sql.Date.valueOf(dataNascimento), nacionalidade, telefone, newreservaId);
+				hospedeController.alterar(hospede);
+				hospedeController.desconectar();
+				JOptionPane.showMessageDialog(contentPane, "hospede atualizado!");
+			} else {
+				JOptionPane.showMessageDialog(null, "Não é permitido atualizar campos vazios.!","Erro", JOptionPane.ERROR_MESSAGE);
+			}
+				
+			
+		}
 	}
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	

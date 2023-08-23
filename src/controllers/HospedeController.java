@@ -35,7 +35,7 @@ public class HospedeController {
 		return this.hospedeDAO.buscarPorId(hospedeId);
 	}
 	
-	public Hospede buscarPorSobrenome(String sobrenome){
+	public List<Hospede> buscarPorSobrenome(String sobrenome){
 		return this.hospedeDAO.buscarPorSobrenome(sobrenome);
 	}
 	

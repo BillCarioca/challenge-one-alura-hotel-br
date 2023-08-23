@@ -293,10 +293,10 @@ public class RegistroHospede extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(validar()) {
 					salvarHospede(reservaId);
-					MenuUsuario menu = new MenuUsuario();
-		            menu.setVisible(true);
+		            Sucesso sucesso = new Sucesso();
+		            sucesso.setVisible(true);
 		            dispose();	
-		            JOptionPane.showMessageDialog(null, "Hospede Cadastrado com Sucesso!");
+		            
 				}else if (txtDataN.getDate().before(new Date())) {
 					JOptionPane.showMessageDialog(null, "Hospede não cadastrado! Data Inválida!","Erro", JOptionPane.ERROR_MESSAGE);
 				}else {
