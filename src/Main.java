@@ -1,6 +1,6 @@
 import java.sql.Connection;
 import java.sql.SQLException;
-
+import java.time.LocalDate;
 import connection.ConnectionFactory;
 import domain.dao.UsuarioDAO;
 
@@ -14,6 +14,8 @@ public class Main {
         UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
         usuarioDAO.buscarTodos().forEach(System.out::println);
         System.out.println("Fechando Conexão!");
+        LocalDate  date = LocalDate.now() ;
+        System.out.println(date);
         try {
 			conn.close();
 		} catch (SQLException e) {

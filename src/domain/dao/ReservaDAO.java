@@ -24,11 +24,11 @@ private Connection connection;
 	public void salvar(Reserva reserva) {
 		try {
 			
-			String sql = "INSERT INTO  reservas (DataEntrada, DataSaida, Valor, FormaPagamento) VALUES(?, ?, ?, ?)";
+			String sql = "INSERT INTO  reservas (data_entrada, data_saida, valor, forma_pagamento) VALUES(?, ?, ?, ?)";
 			
 			try(PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-				pstmt.setDate(1, reserva.getDataEntrada());
-				pstmt.setDate(2, reserva.getDataSaida());
+				pstmt.setDate(1,  reserva.getDataEntrada());
+				pstmt.setDate(2,  reserva.getDataSaida());
 				pstmt.setDouble(3, reserva.getValor());
 				pstmt.setString(4, reserva.getFormaPagamento());
 				pstmt.executeUpdate();
@@ -119,12 +119,12 @@ private Connection connection;
 	}
 	
 	public void alterar(Reserva reserva) {
-		String sql = "UPDATE reservas SET DataEntrada = ?, DataSaida = ?, Valor = ?, FormaPagamento = ? WHERE reseva_id = ?";
+		String sql = "UPDATE reservas SET data_entrada = ?, data_saida = ?, valor = ?, forma_pagamento = ? WHERE reseva_id = ?";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			try {
-				pstmt.setDate(1, reserva.getDataEntrada());
-				pstmt.setDate(2, reserva.getDataSaida());
+				pstmt.setDate(1,  reserva.getDataEntrada());
+				pstmt.setDate(2,  reserva.getDataSaida());
 				pstmt.setDouble(3, reserva.getValor());
 				pstmt.setString(4, reserva.getFormaPagamento());
 				pstmt.setLong(5, reserva.getId());
@@ -142,7 +142,7 @@ private Connection connection;
 	}
 	
 	public void deletar(Long id){
-		String sql = "DELETE FROM reservas WHERE Id = ?";
+		String sql = "DELETE FROM reservas WHERE reseva_id = ?";
 		
 		try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			try {

@@ -7,16 +7,23 @@ public class Reserva {
 	private Date dataEntrada;
 	private Date dataSaida;
 	private Double valor;
-	private String formaPagamento;
+	private FormaPagamento formaPagamento;
 	
 	public Reserva() {}
+	
+	public Reserva(Date dataEntrada, Date dataSaida, Double valor, String formaPagamento) {
+		this.dataEntrada = dataEntrada;
+		this.dataSaida = dataSaida;
+		this.valor = valor;
+		this.formaPagamento = FormaPagamento.fromString(formaPagamento);
+	}
 
 	public Reserva(Long id, Date dataEntrada, Date dataSaida, Double valor, String formaPagamento) {
 		this.id = id;
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
 		this.valor = valor;
-		this.formaPagamento = formaPagamento;
+		this.formaPagamento = FormaPagamento.fromString(formaPagamento);
 	}
 
 	public Long getId() {
@@ -52,17 +59,17 @@ public class Reserva {
 	}
 
 	public String getFormaPagamento() {
-		return formaPagamento;
+		return formaPagamento.getDescricao();
 	}
 
 	public void setFormaPagamento(String formaPagamento) {
-		this.formaPagamento = formaPagamento;
+		this.formaPagamento = FormaPagamento.fromString(formaPagamento);
 	}
 
 	@Override
 	public String toString() {
 		return "Reserva [id=" + id + ", dataChegada=" + dataEntrada + ", dataSaida=" + dataSaida + ", valor=" + valor
-				+ ", formaPagamento=" + formaPagamento + "]";
+				+ ", formaPagamento=" + formaPagamento.getDescricao() + "]";
 	}
 	
 	

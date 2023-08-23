@@ -11,15 +11,23 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+
+import controllers.ReservaController;
+import domain.models.Reserva;
+
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-import java.text.Format;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -142,6 +150,12 @@ public class ReservasView extends JFrame {
 		txtDataS.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				//Ativa o evento, após o usuário selecionar as datas, o valor da reserva deve ser calculado
+				if(ReservasView.txtDataE.getDate()!=null&&ReservasView.txtDataS.getDate()!=null) {
+					long daysBetween = ReservasView.txtDataS.getDate().getTime()-ReservasView.txtDataE.getDate().getTime();
+					long dias = daysBetween/1000/60/60/24;
+					Double valorReserva = dias*100.00;
+					txtValor.setText(String.valueOf(valorReserva));
+				}
 			}
 		});
 		txtDataS.setDateFormatString("yyyy-MM-dd");
@@ -173,7 +187,7 @@ public class ReservasView extends JFrame {
 		txtFormaPagamento.setBackground(SystemColor.text);
 		txtFormaPagamento.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		txtFormaPagamento.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtFormaPagamento.setModel(new DefaultComboBoxModel(new String[] {"Cartão de Crédito", "Cartão de Débito", "Dinheiro"}));
+		txtFormaPagamento.setModel(new DefaultComboBoxModel(new String[] {"Cartão de Crédito", "Cartão de Débito", "Dinheiro", "Pix"}));
 		panel.add(txtFormaPagamento);
 		
 		JLabel lblFormaPago = new JLabel("FORMA DE PAGAMENTO");
@@ -295,11 +309,19 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {		
+				Calendar data = Calendar.getInstance();
+				data.add(Calendar.DATE,-1);
+				Date dataOntem = data.getTime();
+				boolean notNull = (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null);
+				boolean dataValida = (ReservasView.txtDataE.getDate().before(ReservasView.txtDataS.getDate()))&&(ReservasView.txtDataE.getDate().after(dataOntem));
+				if (notNull&&dataValida) {
+					salvarReserva();
 					RegistroHospede registro = new RegistroHospede();
 					registro.setVisible(true);
-				} else {
+				} else if (dataValida){
 					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
+				} else {
+					JOptionPane.showMessageDialog(null, "data invalida");
 				}
 			}						
 		});
@@ -315,6 +337,18 @@ public class ReservasView extends JFrame {
 		lblSeguinte.setFont(new Font("Roboto", Font.PLAIN, 18));
 		lblSeguinte.setBounds(0, 0, 122, 35);
 		btnProximo.add(lblSeguinte);
+	}
+	private void salvarReserva() {
+		ReservaController reservaController = new ReservaController();
+		String pagamento = txtFormaPagamento.getSelectedItem().toString();
+		Double valorReserva =Double.valueOf(txtValor.getText());
+		Date dataEntrada = txtDataE.getDate();
+		Date dataSaida = txtDataS.getDate();
+		Reserva reseva = new Reserva(new java.sql.Date(dataEntrada.getTime()),
+									new java.sql.Date(dataSaida.getTime()),
+									valorReserva, pagamento);
+		reservaController.salvar(reseva);
+		reservaController.desconectar();
 	}
 
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
