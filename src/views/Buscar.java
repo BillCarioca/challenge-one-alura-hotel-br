@@ -247,6 +247,18 @@ public class Buscar extends JFrame {
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEditar);
 		
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				alterarHospede();
+				alterarReserva();
+				modeloHospedes.setRowCount(0);
+				modelo.setRowCount(0);
+				atualizarHospedes(txtBuscar.getText());
+			}
+		});
+		
 		JLabel lblEditar = new JLabel("EDITAR");
 		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEditar.setForeground(Color.WHITE);
@@ -261,15 +273,13 @@ public class Buscar extends JFrame {
 		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnDeletar);
 		
-		btnEditar.addMouseListener(new MouseAdapter() {
+		btnDeletar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				alterarHospede();
-				alterarReserva();
+				deletarReserva();
+				deletarHospede();
 				modeloHospedes.setRowCount(0);
 				modelo.setRowCount(0);
-				atualizarHospedes(txtBuscar.getText());
 			}
 		});
 		
@@ -381,6 +391,40 @@ public class Buscar extends JFrame {
 			}
 				
 			
+		}
+	}
+
+	private void deletarReserva() {
+
+		ReservaController reservaController = new ReservaController();
+		int selectedRowIndexRereservas = tbReservas.getSelectedRow();
+		if(selectedRowIndexRereservas != -1) {
+			String id = modelo.getValueAt(selectedRowIndexRereservas, 0).toString();
+			Long newId = Long.parseLong(id);
+			if(!id.trim().isEmpty()) {
+				reservaController.deletar(newId);
+				reservaController.desconectar();
+				JOptionPane.showMessageDialog(contentPane, "Reserva Deletada!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Não é permitido deletar campos vazios.!","Erro", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	private void deletarHospede() {
+		HospedeController hospedeController = new HospedeController();
+		int selectedRowIndex = tbHospedes.getSelectedRow();
+		
+		if(selectedRowIndex != -1) {
+			String id = modeloHospedes.getValueAt(selectedRowIndex, 0).toString();
+			Long newId = Long.parseLong(id);
+			if(!id.trim().isEmpty()) {
+				hospedeController.deletar(newId);
+				hospedeController.desconectar();
+				JOptionPane.showMessageDialog(contentPane, "Hospede Deletado!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Não é permitido deletar campos vazios.!","Erro", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 	
